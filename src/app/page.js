@@ -1,95 +1,69 @@
-import Image from "next/image";
-import styles from "./page.module.css";
+"use client";
+
+import MyCustomError from "@/components/customError/MyCustomError";
+import CardGrid from "@/components/venueCard/CardGrid";
+import { Card } from "@nextui-org/react";
+import { useEffect, useState } from "react";
+import { getVenueList } from "./action";
 
 export default function Home() {
+  const [venueList, setVenueList] = useState([]);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const callApi = async () => {
+      const res = await getVenueList();
+      if (res.error) {
+        setError(<MyCustomError status={res.code} error={res.error} message={res.message} />);
+      } else {
+        setError(null);
+        const { venueList } = res;
+        setVenueList(venueList);
+      }
+    };
+
+    callApi();
+  }, []);
   return (
-    <main className={styles.main}>
-      <div className={styles.description}>
-        <p>
-          Get started by editing&nbsp;
-          <code className={styles.code}>src/app/page.js</code>
-        </p>
-        <div>
-          <a
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{" "}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className={styles.vercelLogo}
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
+    <>
+      {error ? error : ""}
+      <CardGrid venueList={venueList} />
+      {/* <div className="text-center p-8">
+        <h1 className="text-2xl font-bold">Product Highlight</h1>
+        <p className="text-lg text-gray-600 mb-8">Somethings you will get in this product</p>
+        <div className="flex flex-wrap justify-center gap-6">
+          <div className="bg-gray-50 rounded-lg shadow-md w-64 p-6 text-center">
+            <div className="text-4xl text-purple-600 mb-4">🔄</div>
+            <h2 className="text-xl font-semibold mb-2">Reusable Blocks</h2>
+            <p className="text-gray-600">Easy to customize Screens, & Reusable section</p>
+          </div>
+          <div className="bg-gray-50 rounded-lg shadow-md w-64 p-6 text-center">
+            <div className="text-4xl text-purple-600 mb-4">🖥️</div>
+            <h2 className="text-xl font-semibold mb-2">Ready to Every Screen</h2>
+            <p className="text-gray-600">Available for Desktop, tablet, & mobile screen</p>
+          </div>
+          <div className="bg-gray-50 rounded-lg shadow-md w-64 p-6 text-center">
+            <div className="text-4xl text-purple-600 mb-4">📂</div>
+            <h2 className="text-xl font-semibold mb-2">Organized Layer</h2>
+            <p className="text-gray-600">The file named, grouped and well organized</p>
+          </div>
+          <div className="bg-gray-50 rounded-lg shadow-md w-64 p-6 text-center">
+            <div className="text-4xl text-purple-600 mb-4">🔗</div>
+            <h2 className="text-xl font-semibold mb-2">Free Icons</h2>
+            <p className="text-gray-600">Get +100 icons ready to use form our icon packs</p>
+          </div>
+          <div className="bg-gray-50 rounded-lg shadow-md w-64 p-6 text-center">
+            <div className="text-4xl text-purple-600 mb-4">💻</div>
+            <h2 className="text-xl font-semibold mb-2">Ready to develop</h2>
+            <p className="text-gray-600">The design code is ready in Figma's dev mode.</p>
+          </div>
+          <Card className="bg-gray-50 rounded-lg shadow-md w-64 p-6 text-center">
+            <div className="text-4xl text-purple-600 mb-4">📡</div>
+            <h2 className="text-xl font-semibold mb-2">Ready to Live</h2>
+            <p className="text-gray-600">Ready to Live for no code website</p>
+          </Card>
         </div>
-      </div>
-
-      <div className={styles.center}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
-
-      <div className={styles.grid}>
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Docs <span>-&gt;</span>
-          </h2>
-          <p>Find in-depth information about Next.js features and API.</p>
-        </a>
-
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Learn <span>-&gt;</span>
-          </h2>
-          <p>Learn about Next.js in an interactive course with&nbsp;quizzes!</p>
-        </a>
-
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Templates <span>-&gt;</span>
-          </h2>
-          <p>Explore starter templates for Next.js.</p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Deploy <span>-&gt;</span>
-          </h2>
-          <p>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
-    </main>
+      </div> */}
+    </>
   );
 }
