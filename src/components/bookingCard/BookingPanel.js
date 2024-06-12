@@ -5,7 +5,7 @@ import { today, isWeekend, getLocalTimeZone, parseDate } from "@internationalize
 import { useLocale } from "@react-aria/i18n";
 import { useState } from "react";
 
-export default function BookingPanel({ venueId, dates }) {
+export default function BookingPanel({ venueId, dates, venuePrice }) {
   // const [bookingDate, setBookingDate] = useState(today(getLocalTimeZone()));
   const [dateString, setDateString] = useState("");
   const [guest, setGuest] = useState(50);
@@ -59,7 +59,7 @@ export default function BookingPanel({ venueId, dates }) {
     <Card className="flex w-96">
       <CardHeader>
         <div>
-          <p className="text-lg font-bold">PKR 50,000</p>
+          <p className="text-lg font-bold">PKR {venuePrice}</p>
         </div>
       </CardHeader>
       <Divider />

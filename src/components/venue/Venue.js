@@ -28,7 +28,7 @@ export default function Venue({ venue }) {
       <Divider />
       <VenueDescription description={venue && venue.description} />
       <Divider />
-      <BookingCard venueId={venue && venue.id} />
+      <BookingCard venueId={venue && venue.id} venuePrice={venue && venue.estimate} />
       <Divider />
     </div>
   );

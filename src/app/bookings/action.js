@@ -17,14 +17,18 @@ export const getBookings = async () => {
   }
 
   const session = JSON.parse(value);
+  try {
+    const res = await fetch(`${process.env.HOST}/bookings/user`, {
+      cache: "no-store",
+      method: "GET",
+      headers: { Authorization: `Bearer ${session.jwt}` },
+    });
 
-  const res = await fetch(`${process.env.HOST}/bookings/user`, {
-    cache: "no-store",
-    method: "GET",
-    headers: { Authorization: `Bearer ${session.jwt}` },
-  });
-
-  console.log(`got ${res.status} from /bookings/user - BOOKINGS/ACTION.JS`);
-  const data = await res.json();
-  return data;
+    console.log(`got ${res.status} from /bookings/user - BOOKINGS/ACTION.JS`);
+    const data = await res.json();
+    console.log(data);
+    return data;
+  } catch (error) {
+    return { status: 503, error: "Internal Server Error", message: "Service is offline" };
+  }
 };

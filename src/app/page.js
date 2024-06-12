@@ -2,7 +2,21 @@
 
 import MyCustomError from "@/components/customError/MyCustomError";
 import CardGrid from "@/components/venueCard/CardGrid";
-import { Card } from "@nextui-org/react";
+import {
+  Button,
+  Card,
+  CardBody,
+  CardFooter,
+  CardHeader,
+  Tab,
+  Table,
+  TableBody,
+  TableCell,
+  TableColumn,
+  TableHeader,
+  TableRow,
+} from "@nextui-org/react";
+import Image from "next/image";
 import { useEffect, useState } from "react";
 import { getVenueList } from "./action";
 
@@ -13,8 +27,9 @@ export default function Home() {
   useEffect(() => {
     const callApi = async () => {
       const res = await getVenueList();
+
       if (res.error) {
-        setError(<MyCustomError status={res.code} error={res.error} message={res.message} />);
+        setError(<MyCustomError response={res} />);
       } else {
         setError(null);
         const { venueList } = res;
@@ -24,10 +39,19 @@ export default function Home() {
 
     callApi();
   }, []);
+
   return (
     <>
       {error ? error : ""}
       <CardGrid venueList={venueList} />
+
+      {/* <body
+        className="bg-center bg-cover bg-no-repeat backdrop-blur-md flex justify-center h-screen font-sans relative p-8"
+        style="background-image: url('https://images.pexels.com/photos/2876787/pexels-photo-2876787.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2');"
+      > */}
+
+      {/* </body> */}
+
       {/* <div className="text-center p-8">
         <h1 className="text-2xl font-bold">Product Highlight</h1>
         <p className="text-lg text-gray-600 mb-8">Somethings you will get in this product</p>

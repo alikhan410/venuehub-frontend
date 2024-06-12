@@ -5,16 +5,21 @@ import { useEffect, useState } from "react";
 import { getBookings } from "./action";
 
 export default function Bookings() {
-  const [bookings, setBookings] = useState([]);
+  const [bookings, setBookings] = useState(null);
   const [error, setError] = useState(null);
   useEffect(() => {
     const get = async () => {
       const res = await getBookings();
       if (res.error) {
-        setError(<MyCustomError status={res.code} error={res.error} message={res.message} />);
+        setError(<MyCustomError response={res} />);
       } else {
         setError(null);
-        setBookings(res);
+
+        if (res.length === 0) {
+          setBookings([]);
+        } else {
+          setBookings(res);
+        }
       }
     };
 

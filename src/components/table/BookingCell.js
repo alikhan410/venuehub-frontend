@@ -1,7 +1,9 @@
+"use client";
+
 import React from "react";
 import { Chip, Button } from "@nextui-org/react";
-import { parseDate, parseDateTime } from "@internationalized/date";
 import Link from "next/link";
+import { createPaymentIntent, getOrderStatus } from "./action";
 
 const statusColorMap = {
   PENDING: "warning",
@@ -11,8 +13,18 @@ const statusColorMap = {
   RESERVED: "warning",
 };
 
-const BookingCell = (booking, columnKey) => {
-  console.log(booking);
+const BookingCell = (booking, columnKey, router) => {
+  const clickHandler = async () => {
+    const res = await createPaymentIntent(booking.id);
+    if (res.error) {
+      console.log(res.message);
+    } else {
+      const order = await getOrderStatus(res.orderId);
+      // router.push(`/create-order/${res.orderId}`);
+      router.push(`/checkout?orderId=${res.orderId}`);
+    }
+  };
+
   const cellValue = booking[columnKey];
 
   switch (columnKey) {
@@ -35,7 +47,7 @@ const BookingCell = (booking, columnKey) => {
       return (
         <div className="text-start">
           {booking.status === "RESERVED" ? (
-            <Button href={`/create-order/${booking.id}`} as={Link} color="warning" variant="solid">
+            <Button onClick={clickHandler} color="warning" variant="solid">
               Pay now
             </Button>
           ) : (

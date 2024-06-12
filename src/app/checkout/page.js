@@ -2,7 +2,10 @@
 import React, { useState, useEffect } from "react";
 import { loadStripe } from "@stripe/stripe-js";
 import { Elements } from "@stripe/react-stripe-js";
-import CheckoutForm from "@/components/CheckoutForm";
+import CheckoutForm from "@/components/checkoutForm/CheckoutForm";
+import { getOrderStatus } from "./action";
+import { Spinner } from "@nextui-org/react";
+import MyCustomError from "@/components/customError/MyCustomError";
 
 // Make sure to call loadStripe outside of a component’s render to avoid
 // recreating the Stripe object on every render.
@@ -14,20 +17,25 @@ const stripePromise = loadStripe(
 );
 
 export default function Checkout({ searchParams }) {
-  const clientSecret = searchParams.payment_intent_client_secret;
-
+  const [clientSecret, setClientSecret] = useState("");
   const [isAvailable, setIsAvailable] = useState(false);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     const getStatus = async () => {
-      const res = await axios.get(`/order/${clientSecret}`);
-
-      const status = res.status;
-
-      if (status == "FAILED" || status == "BOOKED" || status == "COMPLETED") {
-        setIsAvailable(false);
+      const res = await getOrderStatus(searchParams.orderId);
+      console.log(res);
+      if (res.error) {
+        setError(<MyCustomError response={res} />);
+      } else if (res.orderStatus != "PENDING") {
+        const err = {
+          status: 400,
+          error: "Bad Request",
+          message: "Payment in processed",
+        };
+        setError(<MyCustomError response={err} />);
       } else {
-        //if RESERVED
+        setClientSecret(res.clientSecret);
         setIsAvailable(true);
       }
     };
@@ -36,22 +44,37 @@ export default function Checkout({ searchParams }) {
   }, []);
 
   const appearance = {
-    theme: "stripe",
+    theme: "flat",
   };
+  // const options = {
+  //   clientSecret,
+  //   appearance,
+  // };
+
   const options = {
     clientSecret,
     appearance,
+    layout: {
+      type: "tabs",
+      defaultCollapsed: false,
+    },
   };
 
   return (
-    <div className="App">
-      {isAvailable ? (
-        <Elements options={options} stripe={stripePromise}>
-          <CheckoutForm />
-        </Elements>
+    <>
+      {error ? (
+        error
       ) : (
-        <p>PAYMENT FAILED</p>
+        <div className="App">
+          {isAvailable ? (
+            <Elements options={options} stripe={stripePromise}>
+              <CheckoutForm />
+            </Elements>
+          ) : (
+            <Spinner />
+          )}
+        </div>
       )}
-    </div>
+    </>
   );
 }

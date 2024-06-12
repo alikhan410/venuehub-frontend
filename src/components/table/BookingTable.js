@@ -15,6 +15,7 @@ import { columns } from "./data";
 import Link from "next/link";
 // import { useCallback } from "react";
 import BookingCell from "./BookingCell";
+import { useRouter } from "next/navigation";
 
 const statusColorMap = {
   PENDING: "warning",
@@ -25,12 +26,17 @@ const statusColorMap = {
 };
 
 export default function BookingTable({ bookings }) {
-  if (!bookings || bookings.length === 0) {
+  const router = useRouter();
+  if (!bookings) {
     return (
       <div className="mx-16 grid grid-cols-1">
         <Spinner />
       </div>
     );
+  }
+
+  if (bookings.length === 0) {
+    return <div className="mx-16 grid grid-cols-1">NO BOOKINGS</div>;
   }
 
   return (
@@ -45,24 +51,11 @@ export default function BookingTable({ bookings }) {
 
       <TableBody items={bookings}>
         {(item) => (
-          <TableRow key={item.id}>{(columnKey) => <TableCell>{BookingCell(item, columnKey)}</TableCell>}</TableRow>
+          <TableRow key={item.id}>
+            {(columnKey) => <TableCell>{BookingCell(item, columnKey, router)}</TableCell>}
+          </TableRow>
         )}
       </TableBody>
     </Table>
-
-    // <Table isStriped aria-label="Example table with custom cells">
-    //   <TableHeader columns={columns}>
-    //     {(column) => (
-    //       <TableColumn key={column.uid} align="start">
-    //         {column.name}
-    //       </TableColumn>
-    //     )}
-    //   </TableHeader>
-    //   <TableBody items={bookings}>
-    //     {(item) => (
-    //       <TableRow key={item.id}>{(columnKey) => <TableCell>{BookingCell(item, columnKey)}</TableCell>}</TableRow>
-    //     )}
-    //   </TableBody>
-    // </Table>
   );
 }

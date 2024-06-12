@@ -16,8 +16,7 @@ export default function MyVenues() {
       const res = await getVenueList();
 
       if (res.error) {
-        console.log(res);
-        setError(<MyCustomError status={res.code} error={res.error} message={res.message} />);
+        setError(<MyCustomError response={res} />);
       } else {
         const { venueList } = res;
         setVenueList(venueList);

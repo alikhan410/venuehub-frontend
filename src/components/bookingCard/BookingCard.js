@@ -6,7 +6,7 @@ import { getBookings } from "./action";
 import { useState } from "react";
 import { Chip } from "@nextui-org/react";
 
-export default function BookingCard({ venueId }) {
+export default function BookingCard({ venueId, venuePrice }) {
   const [bookings, setBookings] = useState([]);
   const [error, setErrors] = useState(null);
 
@@ -29,7 +29,7 @@ export default function BookingCard({ venueId }) {
       {error == null ? (
         <>
           <GetCalendar dates={bookings} className="grow-0" />
-          <BookingPanel dates={bookings} venueId={venueId} />
+          <BookingPanel dates={bookings} venueId={venueId} venuePrice={venuePrice} />
         </>
       ) : (
         error

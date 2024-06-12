@@ -15,7 +15,7 @@ export default function Home({ params }) {
       const res = await getVenue(id);
 
       if (res.error) {
-        setError(<MyCustomError status={res.code} error={res.error} message={res.message} />);
+        setError(<MyCustomError response={res} />);
       } else {
         setError(null);
         setVenue(res);

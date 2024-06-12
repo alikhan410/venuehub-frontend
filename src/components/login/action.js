@@ -8,29 +8,32 @@ export const loginUser = async (username, password) => {
     myCookies.set("session", null);
   }
   const userCredentials = { username, password };
-  const res = await fetch(`${process.env.HOST}/user/login`, {
-    cache: "no-store",
-    method: "POST",
-    body: JSON.stringify(userCredentials),
-    headers: {
-      "Content-Type": "application/json",
-    },
-  });
+  try {
+    const res = await fetch(`${process.env.HOST}/user/login`, {
+      cache: "no-store",
+      method: "POST",
+      body: JSON.stringify(userCredentials),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    const data = await res.json();
 
-  const data = await res.json();
+    console.log(data);
+    console.log(`got ${res.status} from user/login - IN LOGIN ACTIONS`);
 
-  console.log(data);
-  console.log(`got ${res.status} from user/login - IN LOGIN ACTIONS`);
+    if (res.status != 200) {
+      myCookies.delete("session");
+      return data;
+    }
 
-  if (res.status != 200) {
-    myCookies.delete("session");
+    const session = { jwt: data.jwt };
+    myCookies.set("session", JSON.stringify(session));
+
     return data;
+  } catch (error) {
+    return { status: 503, error: "Internal Server Error", message: "Server is offline" };
   }
-
-  const session = { jwt: data.jwt };
-  myCookies.set("session", JSON.stringify(session));
-
-  return data;
 };
 
 export const loginVendor = async (username, password) => {
@@ -38,27 +41,33 @@ export const loginVendor = async (username, password) => {
   if (myCookies.get("session")) {
     myCookies.delete("session");
   }
+
   const userCredentials = { username, password };
-  const res = await fetch(`${process.env.HOST}/vendor/login`, {
-    cache: "no-store",
-    method: "POST",
-    body: JSON.stringify(userCredentials),
-    headers: {
-      "Content-Type": "application/json",
-    },
-  });
-  const data = await res.json();
 
-  console.log(data);
-  console.log(`got ${res.status} from vendor/login - IN LOGIN ACTIONS`);
+  try {
+    const res = await fetch(`${process.env.HOST}/vendor/login`, {
+      cache: "no-store",
+      method: "POST",
+      body: JSON.stringify(userCredentials),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    const data = await res.json();
 
-  if (res.status != 200) {
-    myCookies.delete("session");
+    console.log(data);
+    console.log(`got ${res.status} from vendor/login - IN LOGIN ACTIONS`);
+
+    if (res.status != 200) {
+      myCookies.delete("session");
+      return data;
+    }
+
+    const session = { jwt: data.jwt };
+    myCookies.set("session", JSON.stringify(session));
+
     return data;
+  } catch (error) {
+    return { status: 503, error: "Internal Server Error", message: "Server is offline" };
   }
-
-  const session = { jwt: data.jwt };
-  myCookies.set("session", JSON.stringify(session));
-
-  return data;
 };
